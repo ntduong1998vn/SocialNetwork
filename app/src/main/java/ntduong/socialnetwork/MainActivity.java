@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    FirebaseAuth auth;
+    //FirebaseAuth auth;
     FirebaseDatabase db;
 
     NavigationView navigationView;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference UserRef;
     CircleImageView navProfileImage;
     TextView navProfileUserName;
+    ImageView AddNewPostButton;
 
     String currentUserID;
 
@@ -52,10 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        mToolbar =(Toolbar) findViewById(R.id.main_page_toolbar);
+        mToolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Home");
 
+        AddNewPostButton = findViewById(R.id.add_new_post_button);
         drawerLayout = findViewById(R.id.drawable_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        navigationView =findViewById(R.id.navigation_view);
+        navigationView = findViewById(R.id.navigation_view);
         View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
         navProfileImage = navView.findViewById(R.id.nav_profile_image);
         navProfileUserName = navView.findViewById(R.id.nav_user_full_name);
@@ -95,7 +98,16 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        AddNewPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendUserToPostActivity();
+            }
+        });
+    }
 
+    private void SendUserToPostActivity() {
+        startActivity(new Intent(MainActivity.this,PostActivity.class));
     }
 
     @Override
@@ -157,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         {
             case R.id.nav_post:
                 Toast.makeText(this, "Post", Toast.LENGTH_SHORT).show();
-                //SendUserToPostActivity();
+                SendUserToPostActivity();
                 break;
 
             case R.id.nav_profile:
