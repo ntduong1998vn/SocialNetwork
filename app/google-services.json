@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "737482396108-vfd2tfk0bds51rrqi5fgasrnad7sbl26.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ntduong.socialnetwork",
+            "certificate_hash": "eb3e6fee23d078471c2b8c42cbcd277635ecb797"
+          }
+        },
+        {
           "client_id": "737482396108-lre0ru4qv5o1imsnc2uu9s4bu15fr6t0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

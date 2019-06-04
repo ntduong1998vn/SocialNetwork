@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -119,15 +120,43 @@ public class PostActivity extends AppCompatActivity {
 
         postRandomName = saveCurrentDate + saveCurrentTime;
 
-        StorageReference filePath = PostImagesReference.child("Post Image")
+        final StorageReference filePath = PostImagesReference.child("Post Image")
                 .child(ImageUri.getLastPathSegment() + postRandomName + "jpg");
+        Task<Uri> urlTask = filePath.putFile(ImageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return filePath.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    downloadUrl = String.valueOf(task.getResult());
+                    //downloadUrl = task.getResult().getStorage().getDownloadUrl().toString();
+
+                    Toast.makeText(PostActivity.this, "Image upload secessfully to Storage Firebase " + downloadUrl,
+                            Toast.LENGTH_SHORT).show();
+                    SavingPostInformationDatabase();
+                } else {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(PostActivity.this, "Error occured: "+message, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        /*
         filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
+                    //downloadUrl = String.valueOf(filePath.getDownloadUrl());
                     downloadUrl = task.getResult().getStorage().getDownloadUrl().toString();
 
-                    Toast.makeText(PostActivity.this, "Image upload secessfully to Storage Firebase",
+                    Toast.makeText(PostActivity.this, "Image upload secessfully to Storage Firebase " + downloadUrl,
                             Toast.LENGTH_SHORT).show();
                     SavingPostInformationDatabase();
                 }
@@ -136,7 +165,7 @@ public class PostActivity extends AppCompatActivity {
                     Toast.makeText(PostActivity.this, "Error occured: "+message, Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
 
     private void SavingPostInformationDatabase() {
