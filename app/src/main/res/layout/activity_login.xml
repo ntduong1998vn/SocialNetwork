@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="20dp"
     android:background="@drawable/register"
     tools:context=".LoginActivity">
 
     <ImageView
         android:id="@+id/login_icon"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="30dp"
         app:srcCompat="@drawable/logo" />
 
@@ -21,12 +22,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_icon"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="Email"
         android:background="@drawable/input"
         android:inputType="textEmailAddress"
-        android:padding="10dp"
+        android:padding="6dp"
         android:drawableStart="@drawable/email"/>
 
     <EditText
@@ -35,11 +36,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/login_email"
         android:ems="10"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:hint="Password"
         android:inputType="textPassword"
         android:background="@drawable/input"
-        android:padding="10dp"
+        android:padding="6dp"
         android:drawableStart="@drawable/password"/>
 
     <Button
@@ -48,23 +49,35 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/login_password"
         android:background="@drawable/button"
-        android:padding="15dp"
+        android:padding="10dp"
         android:text="Login"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/register_account_link"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_button"
-        android:layout_marginTop="20dp"
-        android:text="Don't have an account , Need new Account"
+        android:layout_marginTop="16dp"
+        android:text="Not have account? Register"
         android:textAlignment="center"
         android:textColor="@android:color/holo_red_dark"
         android:textColorHighlight="@color/colorProfile"
         android:textSize="22sp"
         android:textStyle="bold" />
+    <TextView
+        android:id="@+id/login_with_google"
+        android:layout_marginTop="6dp"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="22sp"
+        android:layout_below="@+id/register_account_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="or Login with Google"
+        android:textStyle="bold"/>
+
 
     <TextView
         android:id="@+id/forget_password_link"

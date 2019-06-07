@@ -51,10 +51,10 @@ public class ProfileActvity extends AppCompatActivity {
                     String username = dataSnapshot.child("userName").getValue().toString();
                     String fullName = dataSnapshot.child("fullName").getValue().toString();
                     String status = dataSnapshot.child("status").getValue().toString();
-                    String country = dataSnapshot.child("country").getValue().toString();
-                    String dob = dataSnapshot.child("dob").getValue().toString();
+                    String country = dataSnapshot.child("countryName").getValue().toString();
+                    String dob = dataSnapshot.child("job").getValue().toString();
                     String gender = dataSnapshot.child("gender").getValue().toString();
-                    String relationshipstatus = dataSnapshot.child("relationshipstatus").getValue().toString();
+                    String relationshipstatus = dataSnapshot.child("relationshipStatus").getValue().toString();
                     String profileImage = dataSnapshot.child("profileimage").getValue().toString();
 
                     Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(userProfileImage);
