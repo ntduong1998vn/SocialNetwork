@@ -60,7 +60,22 @@
         android:layout_below="@id/login_button"
         android:layout_marginTop="20dp"
         android:text="Don't have an account , Need new Account"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textSize="22sp" />
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_dark"
+        android:textColorHighlight="@color/colorProfile"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/forget_password_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:text="Quên mật khẩu ?"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

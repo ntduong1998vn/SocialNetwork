@@ -13,14 +13,13 @@
 
         <include
             android:id="@+id/main_page_toolbar"
-            layout="@layout/app_bar_layout">
-        </include>
+            layout="@layout/app_bar_layout"></include>
 
         <FrameLayout
             android:id="@+id/main_container"
-            android:layout_below="@id/main_page_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/main_page_toolbar"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="false">
 
@@ -30,19 +29,20 @@
                 android:layout_height="match_parent" />
 
         </FrameLayout>
+
         <ImageView
             android:id="@+id/add_new_post_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_above="@+id/main_container"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/add_post_high"
-            android:scaleType="centerCrop"
-            android:layout_marginBottom="4dp"
             android:layout_marginRight="12dp"
+            android:layout_marginBottom="4dp"
             android:background="@color/colorPrimaryDark"
             android:baselineAlignBottom="false"
             android:focusableInTouchMode="false"
-            android:layout_above="@+id/main_container"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_post_high" />
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView

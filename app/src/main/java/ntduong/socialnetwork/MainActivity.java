@@ -1,15 +1,17 @@
 package ntduong.socialnetwork;
 
-import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView postList;
     Toolbar mToolbar;
     FirebaseAuth mAuth;
-    DatabaseReference UserRef ,PostRef;
+    DatabaseReference UserRef, PostRef;
     CircleImageView navProfileImage;
     TextView navProfileUserName;
     ImageView AddNewPostButton;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Thiết lập Firebase
         mAuth = FirebaseAuth.getInstance();
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
         PostRef = FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         AddNewPostButton = findViewById(R.id.add_new_post_button);
         drawerLayout = findViewById(R.id.drawable_layout);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,12 +89,12 @@ public class MainActivity extends AppCompatActivity {
         navProfileImage = navView.findViewById(R.id.nav_profile_image);
         navProfileUserName = navView.findViewById(R.id.nav_user_full_name);
 
-        if(mAuth.getCurrentUser() !=null){
+        if (mAuth.getCurrentUser() != null) {
             currentUserID = mAuth.getCurrentUser().getUid();
             UserRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
+                    if (dataSnapshot.exists()) {
                         String fullName = dataSnapshot.child("fullName").getValue().toString();
                         String image = dataSnapshot.child("profileimage").getValue().toString();
 
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         AddNewPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,78 +128,93 @@ public class MainActivity extends AppCompatActivity {
         //DisplayAllUsersPosts();
     }
 
-    private void DisplayAllUsersPosts(){
+    private void DisplayAllUsersPosts() {
 
         FirebaseRecyclerOptions<Posts> options =
                 new FirebaseRecyclerOptions.Builder<Posts>()
                         .setQuery(PostRef, Posts.class)
                         .build();
 
-        FirebaseRecyclerAdapter firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options){
+        FirebaseRecyclerAdapter firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
 
-                    @NonNull
+            @NonNull
+            @Override
+            public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_posts_layout, parent, false);
+
+                return new PostsViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
+
+                final String postKey =getRef(position).getKey();
+
+                postsViewHolder.setFullname(posts.getFullname());
+                postsViewHolder.setTime(posts.getTime());
+                postsViewHolder.setDate(posts.getDate());
+                postsViewHolder.setDescription(posts.getDescription());
+                postsViewHolder.setProfileimage(posts.getProfileimage());
+                postsViewHolder.setPostimage(posts.getPostimage());
+
+                postsViewHolder.view.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View view = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.all_posts_layout, parent, false);
-
-                        return new PostsViewHolder(view);
+                    public void onClick(View view) {
+                        Intent clickPostIntent = new Intent(MainActivity.this,ClickPostActivity.class);
+                        clickPostIntent.putExtra("PostKey",postKey);
+                        startActivity(clickPostIntent);
                     }
+                });
+            }
+        };
 
-                    @Override
-                    protected void onBindViewHolder(@NonNull PostsViewHolder postsViewHolder, int i, @NonNull Posts posts) {
-
-                        postsViewHolder.setFullname(posts.getFullname());
-                        postsViewHolder.setTime(posts.getTime());
-                        postsViewHolder.setDate(posts.getDate());
-                        postsViewHolder.setDescription(posts.getDescription());
-                        postsViewHolder.setProfileimage(posts.getProfileimage());
-                        postsViewHolder.setPostimage(posts.getPostimage());
-
-
-                    }
-                };
         firebaseRecyclerAdapter.startListening();
         postList.setAdapter(firebaseRecyclerAdapter);
         //firebaseRecyclerAdapter.stopListening();
     }
 
-    public static class PostsViewHolder extends RecyclerView.ViewHolder{
+    public static class PostsViewHolder extends RecyclerView.ViewHolder {
 
         View view;
+
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);
             view = itemView;
         }
-        public void setFullname(String fullname){
-            TextView username  = view.findViewById(R.id.post_user_name);
+
+        public void setFullname(String fullname) {
+            TextView username = view.findViewById(R.id.post_user_name);
             username.setText(fullname);
         }
-        public void setProfileimage(String profileimage){
+
+        public void setProfileimage(String profileimage) {
             CircleImageView imageView = view.findViewById(R.id.post_profile_image);
             Picasso.get().load(profileimage).into(imageView);
         }
-        public void setTime(String time){
+
+        public void setTime(String time) {
             TextView PostTime = view.findViewById(R.id.post_time);
             PostTime.setText("  " + time);
         }
-        public void setDate(String date){
+
+        public void setDate(String date) {
             TextView PostDate = view.findViewById(R.id.post_date);
-            PostDate.setText("  "  + date);
+            PostDate.setText("  " + date);
         }
-        public void setDescription(String description){
-            TextView PostDiscription = view.findViewById(R.id.post_description);
+
+        public void setDescription(String description) {
+            TextView PostDiscription = view.findViewById(R.id.click_post_description);
             PostDiscription.setText(description);
         }
-        public void setPostimage(String postimage){
-            ImageView PostImage = view.findViewById(R.id.post_image);
+
+        public void setPostimage(String postimage) {
+            ImageView PostImage = view.findViewById(R.id.click_post_image);
             Picasso.get().load(postimage).into(PostImage);
         }
     }
 
     private void SendUserToPostActivity() {
-        startActivity(new Intent(MainActivity.this,PostActivity.class));
+        startActivity(new Intent(MainActivity.this, PostActivity.class));
     }
 
     @Override
@@ -203,9 +222,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser == null){
+        if (currentUser == null) {
             SendUserToLoginActivity();
-        }else{
+        } else {
             CheckUserExistence();
         }
         //test
@@ -213,13 +232,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void CheckUserExistence(){
+    private void CheckUserExistence() {
         final String current_user_id = mAuth.getCurrentUser().getUid();
 
         UserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(current_user_id)){
+                if (!dataSnapshot.hasChild(current_user_id)) {
                     SendUserToSetupActivity();
                 }
             }
@@ -232,14 +251,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SendUserToSetupActivity() {
-        Intent setupIntent=new Intent(MainActivity.this,SetupActivity.class);
+        Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setupIntent);
         finish();
     }
 
-    void SendUserToLoginActivity(){
-        Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
+    void SendUserToLoginActivity() {
+        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
         finish();
@@ -247,22 +266,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     // Listener event click button Navigation Menu
-    private void UserMenuSelector(MenuItem item){
-        switch (item.getItemId())
-        {
+    private void UserMenuSelector(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.nav_post:
                 Toast.makeText(this, "Post", Toast.LENGTH_SHORT).show();
                 SendUserToPostActivity();
                 break;
 
             case R.id.nav_profile:
+                SendUserToProfileActivity();
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -275,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.nav_find_friends:
+                SendUserToFindFriendActivity();
                 Toast.makeText(this, "Find Friends", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -283,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.nav_setting:
+                SendUserToSettingsActivity();
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -293,10 +314,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void SendUserToProfileActivity() {
+        Intent profileIntent = new Intent(MainActivity.this, ProfileActvity.class);
+        startActivity(profileIntent);
+    }
+
+    private void SendUserToFindFriendActivity() {
+        Intent findIntent = new Intent(MainActivity.this, FindFriendActivity.class);
+        startActivity(findIntent);
+    }
+
+    private void SendUserToSettingsActivity() {
+        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(settingsIntent);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if(mAuth.getCurrentUser() !=null)
-//             mAuth.signOut();
-        }
     }
+}

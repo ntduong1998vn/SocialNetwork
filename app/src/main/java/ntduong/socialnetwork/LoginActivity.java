@@ -22,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
 
     Button LoginButton;
     EditText UserEmail,UserPassword;
-    TextView NeedNewAccountLink;
+    TextView NeedNewAccountLink,resetPasswordLink;
     FirebaseAuth mAuth;
 
     @Override
@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         UserEmail = findViewById(R.id.login_email);
         UserPassword = findViewById(R.id.login_password);
         LoginButton = findViewById(R.id.login_button);
+        resetPasswordLink= findViewById(R.id.forget_password_link);
 
         NeedNewAccountLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,6 +45,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        resetPasswordLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendUserToResetPasswordActivity();
+            }
+        });
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,7 +100,11 @@ public class LoginActivity extends AppCompatActivity {
     void SendUserToRegisterActivity(){
         Intent registerIntent = new Intent(LoginActivity.this,RegisterActivity.class);
         startActivity(registerIntent);
+    }
 
+    void SendUserToResetPasswordActivity(){
+        Intent resetIntent = new Intent(LoginActivity.this,ResetPasswordActivity.class);
+        startActivity(resetIntent);
     }
 
     //
